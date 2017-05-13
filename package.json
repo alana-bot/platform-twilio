@@ -1,6 +1,6 @@
 {
   "name": "@alana/platform-twilio",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Twilio connector for alana bots",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

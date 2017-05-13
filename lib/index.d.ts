@@ -20,8 +20,8 @@ export default class Twilio implements PlatformMiddleware {
     private accountSid;
     private accountToken;
     constructor(theBot: Alana, fromNumber: string, accountSid: string, accountToken: string, portOrApp?: number | Express.Express, route?: string);
-    postHandler(req: Express.Request, res: Express.Response, next: Express.NextFunction): void;
-    processMessage(user: BasicUser, message: IncomingMessage): void;
+    postHandler(req: Express.Request, res: Express.Response, next: Express.NextFunction, args?: any): void;
+    processMessage(user: BasicUser, message: IncomingMessage, args?: any): void;
     start(): Promise<this>;
     stop(): Promise<this>;
     send<U extends User>(user: U, message: OutgoingMessage): Promise<this>;

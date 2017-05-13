@@ -19,7 +19,6 @@ import { Request } from './request';
 import { Response } from './response';
 export { Request, Response };
 
-// defined at https://developers.google.com/actions/reference/conversation
 export default class Twilio implements PlatformMiddleware  {
   protected bot: Alana;
   private port: number;
@@ -49,7 +48,7 @@ export default class Twilio implements PlatformMiddleware  {
     return this;
   }
 
-  public postHandler(req: Express.Request, res: Express.Response, next: Express.NextFunction) {
+  public postHandler(req: Express.Request, res: Express.Response, next: Express.NextFunction, args: any = {}) {
     res.send();
     const incoming: Request = req.body;
     const messages = Twilio.mapExternalToInternal(req.body);
@@ -59,11 +58,11 @@ export default class Twilio implements PlatformMiddleware  {
       _platform: this,
     };
     Promise.mapSeries(messages, (message) => {
-      return this.processMessage(user, message);
+      return this.processMessage(user, message, args);
     });
   }
 
-  public processMessage(user: BasicUser, message: IncomingMessage) {
+  public processMessage(user: BasicUser, message: IncomingMessage, args?: any) {
     this.bot.processMessage(user, message);
   }
 
@@ -90,7 +89,7 @@ export default class Twilio implements PlatformMiddleware  {
     const twilioMessage: Response = Twilio.mapInternalToExternal(message);
     twilioMessage.To = user.id;
     twilioMessage.From = this.fromNumber;
-    console.log('m', twilioMessage);
+
     if (twilioMessage === null) {
       return Promise.resolve(this);
     }
@@ -108,14 +107,12 @@ export default class Twilio implements PlatformMiddleware  {
         password: token,
       },
     }))
-    .tap(() => console.log)
     .catch((err) => {
       console.error(err);
     });
   }
 
   static mapInternalToExternal = (message: OutgoingMessage): Response => {
-    console.log(message);
     const twilioMessage: any = {} as Response;
     switch (message.type) {
       case 'image':
