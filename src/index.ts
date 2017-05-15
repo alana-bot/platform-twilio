@@ -87,12 +87,15 @@ export default class Twilio implements PlatformMiddleware  {
 
   public send<U extends User>(user: U, message: OutgoingMessage): Promise<this> {
     const twilioMessage: Response = Twilio.mapInternalToExternal(message);
-    twilioMessage.To = user.id;
-    twilioMessage.From = this.fromNumber;
-
     if (twilioMessage === null) {
+      if (this.bot.debugOn) {
+        console.error(`Can't send message type "${message.type}" through twilio`);
+      }
       return Promise.resolve(this);
     }
+
+    twilioMessage.To = user.id;
+    twilioMessage.From = this.fromNumber;
     return this.sendToTwilio(twilioMessage, this.accountSid, this.accountToken)
       .then(() => this);
   }
